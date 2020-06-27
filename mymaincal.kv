@@ -1,0 +1,220 @@
+Window:
+    StartUp:
+    ManualInput:
+    AutoInput:
+
+<AutoInput>:
+    name: "auto_input"
+    output: output
+    temperature: temperature
+    Button:
+        font_size: 20
+        size_hint: 0.5,0.2
+        pos_hint: {"x": 0, "y": 0}
+        text: "Return to Main Menu"
+        on_release:
+            app.root.current = "start_up"
+            root.manager.transition.direction = "left"
+    BoxLayout:
+        size_hint: 1,0.1
+        pos_hint: {"x": 0, "y": 0.65}
+        Label:
+            text: "Input Your Temperature"
+        FloatInput:
+            id: temperature
+            multiline: False
+    Label:
+        text: "Results"
+        size_hint: 0.3, 0.1
+        pos_hint: {"x": 0.35, "y": 0.35}
+
+    OutputInput:
+        id : output
+        multiline: False
+        size_hint: 0.3, 0.1
+        pos_hint: {"x": 0.35, "y": 0.25}
+
+
+<StartUp>:
+    name: "start_up"
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            size_hint: (1, 0.05)
+            text_size: self.size
+            halign: 'left'
+            text: "Made by Dr.Paluch's Research Team - Written by Thomas Nguyen"
+        Label:
+            size_hint: (1, 0.6)
+            font_size: 40
+            text: "[b]Choose your input method[/b]"
+            markup: True
+        GridLayout:
+            cols: 2
+            size_hint: (1, 0.6)
+            Button:
+                font_size: 40
+                text: "Auto Input"
+                on_release:
+                    app.root.current= "auto_input"
+                    root.manager.transition.direction = "right"
+            Button:
+                font_size: 40
+                text: "Manual Input"
+                on_release:
+                    app.root.current = "manual_input"
+                    root.manager.transition.direction = "left"
+
+
+
+
+
+<ManualInput>:
+    name: "manual_input"
+    compound_1_v: v_parameters_1
+    compound_2_v: v_parameters_2
+    compound_1_lambda: lambda_parameters_1
+    compound_2_lambda: lambda_parameters_2
+    compound_1_tau: tau_parameters_1
+    compound_2_tau: tau_parameters_2
+    compound_1_rho: rho_parameters_1
+    compound_2_rho: rho_parameters_2
+    compound_1_alpha: alpha_parameters_1
+    compound_2_alpha: alpha_parameters_2
+    compound_1_beta: beta_parameters_1
+    compound_2_beta: beta_parameters_2
+    temperature: temperature
+    output_1_to_2: output_1_to_2
+    output_2_to_1: output_2_to_1
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+        size_hint: 1, 1
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: (1, 0.2)
+            Label:
+                text: "Compound 1"
+                font_size: 20
+            Label:
+                text: "Compound 2"
+                font_size: 20
+
+        GridLayout:
+            cols: 4
+            size_hint: 1,0.6
+            Label:
+                text: "v parameter of Compound 1"
+            FloatInput:
+                id: v_parameters_1
+                multiline: False
+
+            Label:
+                text: "v parameter of Compound 2"
+            FloatInput:
+                id: v_parameters_2
+                multiline: False
+
+            Label:
+                text: "lambda parameter of Compound 1"
+            FloatInput:
+                id: lambda_parameters_1
+                multiline: False
+
+            Label:
+                text: "lambda parameter of Compound 2"
+            FloatInput:
+                id: lambda_parameters_2
+                multiline: False
+
+            Label:
+                text: "tau parameter of Compound 1"
+            FloatInput:
+                id: tau_parameters_1
+                multiline: False
+
+            Label:
+                text: "tau parameter of Compound 2"
+            FloatInput:
+                id: tau_parameters_2
+                multiline: False
+
+            Label:
+                text: "rho parameter of Compound 1"
+            FloatInput:
+                id: rho_parameters_1
+                multiline: False
+
+            Label:
+                text: "rho parameter of Compound 2"
+            FloatInput:
+                id: rho_parameters_2
+                multiline: False
+
+            Label:
+                text: "alpha parameter of Compound 1"
+            FloatInput:
+                id: alpha_parameters_1
+                multiline: False
+
+            Label:
+                text: "alpha parameter of Compound 2"
+            FloatInput:
+                id: alpha_parameters_2
+                multiline: False
+
+            Label:
+                text: "beta parameter of Compound 1"
+            FloatInput:
+                id: beta_parameters_1
+                multiline: False
+
+            Label:
+                text: "beta parameter of Compound 2"
+            FloatInput:
+                id: beta_parameters_2
+                multiline: False
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: 1, 0.1
+            Label:
+                size_hint: 0.333, 1
+                text: "temperature"
+            FloatInput:
+                id: temperature
+                multiline: False
+
+        GridLayout:
+            cols: 4
+            size_hint: 1, 0.1
+            Label:
+                text: "Result for Substance 1 in Substance 2"
+            OutputInput:
+                id: output_1_to_2
+                multiline: False
+            Label:
+                text: "Result for Substance 2 in Substance 1"
+            OutputInput:
+                id: output_2_to_1
+                multiline: False
+
+        BoxLayout:
+            orientation: "horizontal"
+            padding: 10
+            size_hint: 1, 0.3
+            Button:
+                text: "Submit"
+                on_press: root.pressed_submit()
+            Button:
+                text: "Clear"
+                on_press: root.pressed_clear()
+        Button:
+            text: "Return to Main Menu"
+            size_hint: 1, 0.3
+            on_release:
+                app.root.current = "start_up"
+                root.manager.transition.direction = "right"
