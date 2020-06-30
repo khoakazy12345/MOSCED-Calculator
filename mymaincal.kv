@@ -5,7 +5,8 @@ Window:
 
 <AutoInput>:
     name: "auto_input"
-    output: output
+    output_1: output_1
+    output_2: output_2
     temperature: temperature
     Button:
         font_size: 20
@@ -23,17 +24,30 @@ Window:
         FloatInput:
             id: temperature
             multiline: False
-    Label:
-        text: "Results"
-        size_hint: 0.3, 0.1
-        pos_hint: {"x": 0.35, "y": 0.35}
 
-    OutputInput:
-        id : output
-        multiline: False
-        size_hint: 0.3, 0.1
-        pos_hint: {"x": 0.35, "y": 0.25}
+    BoxLayout:
+        Label:
+            text: "Results 1 in 2"
+            size_hint: 0.3, 0.1
+            pos_hint: {"x": 0.1, "y": 0.35}
 
+        Label:
+            text: "Result 2 in 1"
+            size_hint: 0.3, 0.1
+            pos_hint: {"x": 0.1, "y": 0.35}
+
+    BoxLayout:
+        OutputInput:
+            id : output_1
+            multiline: False
+            size_hint: 0.3, 0.1
+            pos_hint: {"x": 0.35, "y": 0.25}
+
+        OutputInput:
+            id : output_2
+            multiline: False
+            size_hint: 0.3, 0.1
+            pos_hint: {"x": 0.35, "y": 0.25}
 
 <StartUp>:
     name: "start_up"

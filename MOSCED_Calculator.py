@@ -29,6 +29,32 @@ for row in sheet['B3':'K134']:
     substance_dict[row[0].value] = need_list
 
 
+# Main Calculation Algorithm
+def calculate(v1, v2, lambda1, lambda2, tau1, tau2, rho1, rho2, alpha1, alpha2, beta1, beta2, temp):
+    R = 8.3144598
+    for T in temp:
+        def powerT1(n, T):
+            return n * pow((293 / T), 0.8)
+
+        def powerT2(n, T):
+            return n * pow((293 / T), 0.4)
+
+        POL = pow(rho1, 4) * (1.15 - 1.15 * math.exp(-0.002337 * pow(powerT2(tau1, T), 3))) + 1
+        xi1 = 0.68 * (POL - 1) + pow(3.4 - (2.4 * math.exp(-0.002687 * pow(alpha1 * beta1, 1.5))), pow((293 / T), 2))
+        psi1 = POL + 0.002629 * powerT1(alpha1, T) * powerT1(beta1, T)
+        aa = 0.953 - 0.002314 * (pow(powerT2(tau2, T), 2) + powerT1(alpha2, T) * powerT1(beta2, T))
+        d12 = math.log(pow(v2 / v1, aa)) + 1 - pow(v2 / v1, aa)
+        activity_coefficient = (v2 / (R * T)) * (pow(lambda1 - lambda2, 2) +
+                                                 (pow(rho1, 2) * pow(rho2, 2) * pow(powerT2(tau1, T) - powerT2(tau2, T),
+                                                                                    2)) / psi1 +
+                                                 (powerT1(alpha1, T) - powerT1(alpha2, T)) * (
+                                                         powerT1(beta1, T) - powerT1(beta2, T)) / xi1) + d12
+        return str(math.exp(activity_coefficient))
+
+
+print(calculate(121.7, 81, 17.20, 21.9, 0, 5.19, 1, 1, 0, 2.4, 0, 2.08, [298]))
+
+
 # Filtering the Input (not accepting any characters)
 class OutputInput(TextInput):
     def insert_text(self, substring, from_undo=False):
@@ -61,7 +87,8 @@ class StartUp(Screen):
 
 # Auto Input Screen
 class AutoInput(Screen):
-    output = ObjectProperty(None)
+    output_1 = ObjectProperty(None)
+    output_2 = ObjectProperty(None)
     temperature = ObjectProperty(None)
 
     def __init__(self, **kwargs):
@@ -92,44 +119,6 @@ class AutoInput(Screen):
         self.submit_button.bind(on_press=lambda x: self.press_submit())
         self.add_widget(self.submit_button)
 
-    def calculate(self):
-        substance_1 = self.mainbutton_1.text[13:]
-        substance_2 = self.mainbutton_2.text[13:]
-        v1 = substance_dict[substance_1][2]
-        v2 = substance_dict[substance_2][2]
-        lambda1 = substance_dict[substance_1][3]
-        lambda2 = substance_dict[substance_2][3]
-        tau1 = substance_dict[substance_1][4]
-        tau2 = substance_dict[substance_2][4]
-        rho1 = substance_dict[substance_1][5]
-        rho2 = substance_dict[substance_2][5]
-        alpha1 = substance_dict[substance_1][6]
-        alpha2 = substance_dict[substance_2][6]
-        beta1 = substance_dict[substance_1][7]
-        beta2 = substance_dict[substance_2][7]
-        R = 8.3144598
-        temp = list(map(float, self.temperature.text.split()))
-        for T in temp:
-            def powerT1(n, T):
-                return n * pow((293 / T), 0.8)
-
-            def powerT2(n, T):
-                return n * pow((293 / T), 0.4)
-
-            POL = pow(rho1, 4) * (1.15 - 1.15 * math.exp(-0.002337 * pow(powerT2(tau1, T), 3))) + 1
-            xi1 = 0.68 * (POL - 1) + pow(3.4 - (2.4 * math.exp(-0.002687 * pow(alpha1 * beta1, 1.5))),
-                                         pow((293 / T), 2))
-            psi1 = POL + 0.002629 * powerT1(alpha1, T) * powerT1(beta1, T)
-            aa = 0.953 - 0.002314 * (pow(powerT2(tau2, T), 2) + powerT1(alpha2, T) * powerT1(beta2, T))
-            d12 = math.log(pow(v2 / v1, aa)) + 1 - pow(v2 / v1, aa)
-            activity_coefficient = (v2 / (R * T)) * (pow(lambda1 - lambda2, 2) +
-                                                     (pow(rho1, 2) * pow(rho2, 2) * pow(
-                                                         powerT2(tau1, T) - powerT2(tau2, T),
-                                                         2)) / psi1 +
-                                                     (powerT1(alpha1, T) - powerT1(alpha2, T)) * (
-                                                             powerT1(beta1, T) - powerT1(beta2, T)) / xi1) + d12
-        return str(activity_coefficient)
-
     def show_popup_KeyError(self):
         overflow_error = BoxLayout()
         label = Label(text="At least one substance is not picked")
@@ -145,12 +134,22 @@ class AutoInput(Screen):
         popup.open()
 
     def press_submit(self):
+        substance_1 = self.mainbutton_1.text[13:]
+        substance_2 = self.mainbutton_2.text[13:]
         try:
-            self.output.text = self.calculate()
+            self.output_1.text = calculate(substance_dict[substance_1][2], substance_dict[substance_2][2], substance_dict[substance_1][3], substance_dict[substance_2][3],
+                                           substance_dict[substance_1][4], substance_dict[substance_2][4], substance_dict[substance_1][5], substance_dict[substance_2][5],
+                                           substance_dict[substance_1][6], substance_dict[substance_2][6], substance_dict[substance_1][7], substance_dict[substance_2][7],
+                                           list(map(float, self.temperature.text.split())))
+            self.output_2.text = calculate(substance_dict[substance_2][2], substance_dict[substance_1][2], substance_dict[substance_2][3], substance_dict[substance_1][3],
+                                           substance_dict[substance_2][4], substance_dict[substance_1][4], substance_dict[substance_2][5], substance_dict[substance_1][5],
+                                           substance_dict[substance_2][6], substance_dict[substance_1][6], substance_dict[substance_2][7], substance_dict[substance_1][7],
+                                           list(map(float, self.temperature.text.split())))
         except KeyError:
             self.show_popup_KeyError()
         except UnboundLocalError:
             self.show_popup_UnboundLocalError()
+
 
 # Manual Input Screen
 class ManualInput(Screen):
@@ -170,82 +169,6 @@ class ManualInput(Screen):
     output_1_to_2 = ObjectProperty(None)
     output_2_to_1 = ObjectProperty(None)
 
-    def calculate_1_to_2(self):
-        v1 = float(self.compound_1_v.text)
-        v2 = float(self.compound_2_v.text)
-        lambda1 = float(self.compound_1_lambda.text)
-        lambda2 = float(self.compound_2_lambda.text)
-        tau1 = float(self.compound_1_tau.text)
-        tau2 = float(self.compound_2_tau.text)
-        rho1 = float(self.compound_1_rho.text)
-        rho2 = float(self.compound_2_rho.text)
-        alpha1 = float(self.compound_1_alpha.text)
-        alpha2 = float(self.compound_2_alpha.text)
-        beta1 = float(self.compound_1_beta.text)
-        beta2 = float(self.compound_2_beta.text)
-        R = 8.3144598
-        temp = list(map(float, self.temperature.text.split()))
-        needed_list = []
-        for T in temp:
-            def powerT1(n, T):
-                return n * pow((293 / T), 0.8)
-
-            def powerT2(n, T):
-                return n * pow((293 / T), 0.4)
-
-            POL = pow(rho1, 4) * (1.15 - 1.15 * math.exp(-0.002337 * pow(powerT2(tau1, T), 3))) + 1
-            xi1 = 0.68 * (POL - 1) + pow(3.4 - (2.4 * math.exp(-0.002687 * pow(alpha1 * beta1, 1.5))),
-                                         pow((293 / T), 2))
-            psi1 = POL + 0.002629 * powerT1(alpha1, T) * powerT1(beta1, T)
-            aa = 0.953 - 0.002314 * (pow(powerT2(tau2, T), 2) + powerT1(alpha2, T) * powerT1(beta2, T))
-            d12 = math.log(pow(v2 / v1, aa)) + 1 - pow(v2 / v1, aa)
-            activity_coefficient = (v2 / (R * T)) * (pow(lambda1 - lambda2, 2) +
-                                                     (pow(rho1, 2) * pow(rho2, 2) * pow(
-                                                         powerT2(tau1, T) - powerT2(tau2, T),
-                                                         2)) / psi1 +
-                                                     (powerT1(alpha1, T) - powerT1(alpha2, T)) * (
-                                                             powerT1(beta1, T) - powerT1(beta2, T)) / xi1) + d12
-            needed_list.append(str(math.exp(activity_coefficient)))
-        return ",".join(needed_list)
-
-    def calculate_2_to_1(self):
-        v2 = float(self.compound_1_v.text)
-        v1 = float(self.compound_2_v.text)
-        lambda2 = float(self.compound_1_lambda.text)
-        lambda1 = float(self.compound_2_lambda.text)
-        tau2 = float(self.compound_1_tau.text)
-        tau1 = float(self.compound_2_tau.text)
-        rho2 = float(self.compound_1_rho.text)
-        rho1 = float(self.compound_2_rho.text)
-        alpha2 = float(self.compound_1_alpha.text)
-        alpha1 = float(self.compound_2_alpha.text)
-        beta2 = float(self.compound_1_beta.text)
-        beta1 = float(self.compound_2_beta.text)
-        R = 8.3144598
-        temp = list(map(float, self.temperature.text.split()))
-        needed_list = []
-        for T in temp:
-            def powerT1(n, T):
-                return n * pow((293 / T), 0.8)
-
-            def powerT2(n, T):
-                return n * pow((293 / T), 0.4)
-
-            POL = pow(rho1, 4) * (1.15 - 1.15 * math.exp(-0.002337 * pow(powerT2(tau1, T), 3))) + 1
-            xi1 = 0.68 * (POL - 1) + pow(3.4 - (2.4 * math.exp(-0.002687 * pow(alpha1 * beta1, 1.5))),
-                                         pow((293 / T), 2))
-            psi1 = POL + 0.002629 * powerT1(alpha1, T) * powerT1(beta1, T)
-            aa = 0.953 - 0.002314 * (pow(powerT2(tau2, T), 2) + powerT1(alpha2, T) * powerT1(beta2, T))
-            d12 = math.log(pow(v2 / v1, aa)) + 1 - pow(v2 / v1, aa)
-            activity_coefficient = (v2 / (R * T)) * (pow(lambda1 - lambda2, 2) +
-                                                     (pow(rho1, 2) * pow(rho2, 2) * pow(
-                                                         powerT2(tau1, T) - powerT2(tau2, T),
-                                                         2)) / psi1 +
-                                                     (powerT1(alpha1, T) - powerT1(alpha2, T)) * (
-                                                             powerT1(beta1, T) - powerT1(beta2, T)) / xi1) + d12
-            needed_list.append(str(math.exp(activity_coefficient)))
-        return ",".join(needed_list)
-
     def show_popup_ValueError(self):
         value_error = BoxLayout()
         label = Label(text="Your input not all float/integer \nPlease check it again")
@@ -264,8 +187,20 @@ class ManualInput(Screen):
         try:
             self.output_1_to_2.text = ""
             self.output_2_to_1.text = ""
-            self.output_1_to_2.text = self.calculate_1_to_2()
-            self.output_2_to_1.text = self.calculate_2_to_1()
+            self.output_1_to_2.text = calculate(float(self.compound_1_v.text), float(self.compound_2_v.text),
+                                                float(self.compound_1_lambda.text), float(self.compound_2_lambda.text),
+                                                float(self.compound_1_tau.text), float(self.compound_2_tau.text),
+                                                float(self.compound_1_rho.text), float(self.compound_2_rho.text),
+                                                float(self.compound_1_alpha.text), float(self.compound_2_alpha.text),
+                                                float(self.compound_1_beta.text), float(self.compound_2_beta.text),
+                                                list(map(float, self.temperature.text.split())))
+            self.output_2_to_1.text = calculate(float(self.compound_2_v.text), float(self.compound_1_v.text),
+                                                float(self.compound_2_lambda.text), float(self.compound_1_lambda.text),
+                                                float(self.compound_2_tau.text), float(self.compound_1_tau.text),
+                                                float(self.compound_2_rho.text), float(self.compound_1_rho.text),
+                                                float(self.compound_2_alpha.text), float(self.compound_1_alpha.text),
+                                                float(self.compound_2_beta.text), float(self.compound_1_beta.text),
+                                                list(map(float, self.temperature.text.split())))
         except OverflowError:
             self.show_popup_OverFlowError()
         except ValueError:
