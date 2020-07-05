@@ -1,20 +1,17 @@
 from kivy.app import App
 from kivy.uix.textinput import TextInput
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, NumericProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
-from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.dropdown import DropDown
 from kivy.uix.button import Button
+from kivy.uix.widget import Widget
 import math
 import re
 import openpyxl
-
-# Window_Size
-Window.size = (1200, 750)
 
 # Create a reference MOSCED data list
 wb = openpyxl.load_workbook('MOSCED_Data.xlsx')
@@ -52,9 +49,6 @@ def calculate(v1, v2, lambda1, lambda2, tau1, tau2, rho1, rho2, alpha1, alpha2, 
         return str(math.exp(activity_coefficient))
 
 
-print(calculate(121.7, 81, 17.20, 21.9, 0, 5.19, 1, 1, 0, 2.4, 0, 2.08, [298]))
-
-
 # Filtering the Input (not accepting any characters)
 class OutputInput(TextInput):
     def insert_text(self, substring, from_undo=False):
@@ -85,6 +79,120 @@ class StartUp(Screen):
     pass
 
 
+# Mixed Screen:
+class MixedInput(Screen, Widget):
+    v_1 = ObjectProperty(None)
+    v_2 = ObjectProperty(None)
+    lambda_1 = ObjectProperty(None)
+    lambda_2 = ObjectProperty(None)
+    tau_1 = ObjectProperty(None)
+    tau_2 = ObjectProperty(None)
+    rho_1 = ObjectProperty(None)
+    rho_2 = ObjectProperty(None)
+    alpha_1 = ObjectProperty(None)
+    alpha_2 = ObjectProperty(None)
+    beta_1 = ObjectProperty(None)
+    beta_2 = ObjectProperty(None)
+    temperature = ObjectProperty(None)
+    output_1_to_2 = ObjectProperty(None)
+    output_2_to_1 = ObjectProperty(None)
+    font_size = NumericProperty()
+
+    def __init__(self, **kwargs):
+        super(MixedInput, self).__init__(**kwargs)
+        self.dropdown_1 = DropDown()
+        self.dropdown_1.max_height = 350
+        for btn_1_index in substance_list:
+            self.btn_1 = Button(text=str(btn_1_index), size_hint_y=None, height=44)
+            self.btn_1.bind(on_release=lambda btn: self.dropdown_1.select(btn.text))
+            self.btn_1.bind(on_release=lambda btn: self.set_up(btn.text))
+            self.dropdown_1.add_widget(self.btn_1)
+
+    def add_dropdown(self):
+        self.ids.btn.bind(on_release=self.dropdown_1.open)
+        self.dropdown_1.bind(on_select=lambda instance, a: setattr(self.ids.btn, 'text', "Compound 1: " + a))
+
+    def set_up(self, substance_1):
+        self.v_1.text = str(substance_dict[substance_1][2])
+        self.lambda_1.text = str(substance_dict[substance_1][3])
+        self.tau_1.text = str(substance_dict[substance_1][4])
+        self.rho_1.text = str(substance_dict[substance_1][5])
+        self.alpha_1.text = str(substance_dict[substance_1][6])
+        self.beta_1.text = str(substance_dict[substance_1][7])
+
+    def press_clear(self):
+        self.v_1.text = ""
+        self.lambda_1.text = ""
+        self.tau_1.text = ""
+        self.rho_1.text = ""
+        self.alpha_1.text = ""
+        self.beta_1.text = ""
+        self.v_2.text = ""
+        self.lambda_2.text = ""
+        self.tau_2.text = ""
+        self.rho_2.text = ""
+        self.alpha_2.text = ""
+        self.beta_2.text = ""
+        self.temperature.text = ""
+        self.output_1_to_2.text = ""
+        self.output_2_to_1.text = ""
+        self.ids.btn.text = "Compound 1: Choose one from the list"
+
+    def show_popup_KeyError(self):
+        overflow_error = BoxLayout()
+        label = Label(text="Compound 1 is not picked")
+        overflow_error.add_widget(label)
+        popup = Popup(title='Value Error', content=overflow_error, size_hint=(None, None), size=(400, 400))
+        popup.open()
+
+    def show_popup_AttributeError(self):
+        overflow_error = BoxLayout()
+        label = Label(text=" You forgot the temperature")
+        overflow_error.add_widget(label)
+        popup = Popup(title='Value Error', content=overflow_error, size_hint=(None, None), size=(400, 400))
+        popup.open()
+
+    def show_popup_OverFlowError(self):
+        overflow_error = BoxLayout()
+        label = Label(text="The result is too big \nPlease try another set of numbers")
+        overflow_error.add_widget(label)
+        popup = Popup(title='Value Error', content=overflow_error, size_hint=(None, None), size=(400, 400))
+        popup.open()
+
+    def show_popup_ValueError(self):
+        value_error = BoxLayout()
+        label = Label(text="Compound 2 inputs are not all float/integer \nPlease check it again")
+        value_error.add_widget(label)
+        popup = Popup(title='Value Error', content=value_error, size_hint=(None, None), size=(400, 400))
+        popup.open()
+
+    def press_submit(self):
+        substance_1 = self.ids.btn.text[12:]
+        try:
+            self.output_1_to_2.text = calculate(substance_dict[substance_1][2], float(self.v_2.text),
+                                                substance_dict[substance_1][3], float(self.lambda_2.text),
+                                                substance_dict[substance_1][4], float(self.tau_2.text),
+                                                substance_dict[substance_1][5], float(self.rho_2.text),
+                                                substance_dict[substance_1][6], float(self.alpha_2.text),
+                                                substance_dict[substance_1][7], float(self.beta_2.text),
+                                                list(map(float, self.temperature.text.split())))
+            self.output_2_to_1.text = calculate(float(self.v_2.text), substance_dict[substance_1][2],
+                                                float(self.lambda_2.text), substance_dict[substance_1][3],
+                                                float(self.tau_2.text), substance_dict[substance_1][4],
+                                                float(self.rho_2.text), substance_dict[substance_1][5],
+                                                float(self.alpha_2.text), substance_dict[substance_1][6],
+                                                float(self.beta_2.text), substance_dict[substance_1][7],
+                                                list(map(float, self.temperature.text.split())))
+        except KeyError:
+            self.show_popup_KeyError()
+        except AttributeError:
+            self.show_popup_AttributeError()
+        except ValueError:
+            self.show_popup_ValueError()
+        except OverflowError:
+            self.show_popup_OverFlowError()
+
+
 # Auto Input Screen
 class AutoInput(Screen):
     output_1 = ObjectProperty(None)
@@ -99,10 +207,6 @@ class AutoInput(Screen):
             self.btn_1 = Button(text=str(btn_1_index), size_hint_y=None, height=44)
             self.btn_1.bind(on_release=lambda btn: self.dropdown_1.select(btn.text))
             self.dropdown_1.add_widget(self.btn_1)
-        self.mainbutton_1 = Button(text='Substance 1', size_hint=(0.5, 0.3), pos_hint={"x": 0, "y": 0.75})
-        self.mainbutton_1.bind(on_release=self.dropdown_1.open)
-        self.dropdown_1.bind(on_select=lambda instance, a: setattr(self.mainbutton_1, 'text', "Substance 1: " + a))
-        self.add_widget(self.mainbutton_1)
 
         self.dropdown_2 = DropDown()
         self.dropdown_2.max_height = 250
@@ -110,45 +214,56 @@ class AutoInput(Screen):
             self.btn_2 = Button(text=str(btn_2_index), size_hint_y=None, height=44)
             self.btn_2.bind(on_release=lambda btn: self.dropdown_2.select(btn.text))
             self.dropdown_2.add_widget(self.btn_2)
-        self.mainbutton_2 = Button(text='Substance 2', size_hint=(0.5, 0.3), pos_hint={"x": 0.5, "y": 0.75})
-        self.mainbutton_2.bind(on_release=self.dropdown_2.open)
-        self.dropdown_2.bind(on_select=lambda instance, a: setattr(self.mainbutton_2, 'text', "Substance 2: " + a))
-        self.add_widget(self.mainbutton_2)
 
-        self.submit_button = Button(text="Submit", pos_hint={"x": 0.5, "y": 0}, size_hint=(0.5, 0.2), font_size=20)
-        self.submit_button.bind(on_press=lambda x: self.press_submit())
-        self.add_widget(self.submit_button)
+    def setup_btn_1(self):
+        self.ids.btn_1.bind(on_release=self.dropdown_1.open)
+        self.dropdown_1.bind(on_select=lambda instance, a: setattr(self.ids.btn_1, 'text', "Compound 1: " + a))
+
+    def setup_btn_2(self):
+        self.ids.btn_2.bind(on_release=self.dropdown_2.open)
+        self.dropdown_2.bind(on_select=lambda instance, a: setattr(self.ids.btn_2, 'text', "Compound 2: " + a))
 
     def show_popup_KeyError(self):
         overflow_error = BoxLayout()
-        label = Label(text="At least one substance is not picked")
+        label = Label(text="At least one compound is not picked")
         overflow_error.add_widget(label)
         popup = Popup(title='Value Error', content=overflow_error, size_hint=(None, None), size=(400, 400))
         popup.open()
 
-    def show_popup_UnboundLocalError(self):
+    def show_popup_AttributeError(self):
         overflow_error = BoxLayout()
         label = Label(text=" You forgot the temperature")
         overflow_error.add_widget(label)
         popup = Popup(title='Value Error', content=overflow_error, size_hint=(None, None), size=(400, 400))
         popup.open()
 
+    def press_clear(self):
+        self.ids.btn_1.text = "Compound 1: Choose from the dropdown"
+        self.ids.btn_2.text = "Compound 2: Choose from the dropdown"
+        self.temperature.text = ""
+
     def press_submit(self):
-        substance_1 = self.mainbutton_1.text[13:]
-        substance_2 = self.mainbutton_2.text[13:]
+        substance_1 = self.ids.btn_1.text[12:]
+        substance_2 = self.ids.btn_2.text[12:]
         try:
-            self.output_1.text = calculate(substance_dict[substance_1][2], substance_dict[substance_2][2], substance_dict[substance_1][3], substance_dict[substance_2][3],
-                                           substance_dict[substance_1][4], substance_dict[substance_2][4], substance_dict[substance_1][5], substance_dict[substance_2][5],
-                                           substance_dict[substance_1][6], substance_dict[substance_2][6], substance_dict[substance_1][7], substance_dict[substance_2][7],
+            self.output_1.text = calculate(substance_dict[substance_1][2], substance_dict[substance_2][2],
+                                           substance_dict[substance_1][3], substance_dict[substance_2][3],
+                                           substance_dict[substance_1][4], substance_dict[substance_2][4],
+                                           substance_dict[substance_1][5], substance_dict[substance_2][5],
+                                           substance_dict[substance_1][6], substance_dict[substance_2][6],
+                                           substance_dict[substance_1][7], substance_dict[substance_2][7],
                                            list(map(float, self.temperature.text.split())))
-            self.output_2.text = calculate(substance_dict[substance_2][2], substance_dict[substance_1][2], substance_dict[substance_2][3], substance_dict[substance_1][3],
-                                           substance_dict[substance_2][4], substance_dict[substance_1][4], substance_dict[substance_2][5], substance_dict[substance_1][5],
-                                           substance_dict[substance_2][6], substance_dict[substance_1][6], substance_dict[substance_2][7], substance_dict[substance_1][7],
+            self.output_2.text = calculate(substance_dict[substance_2][2], substance_dict[substance_1][2],
+                                           substance_dict[substance_2][3], substance_dict[substance_1][3],
+                                           substance_dict[substance_2][4], substance_dict[substance_1][4],
+                                           substance_dict[substance_2][5], substance_dict[substance_1][5],
+                                           substance_dict[substance_2][6], substance_dict[substance_1][6],
+                                           substance_dict[substance_2][7], substance_dict[substance_1][7],
                                            list(map(float, self.temperature.text.split())))
         except KeyError:
             self.show_popup_KeyError()
-        except UnboundLocalError:
-            self.show_popup_UnboundLocalError()
+        except AttributeError:
+            self.show_popup_AttributeError()
 
 
 # Manual Input Screen

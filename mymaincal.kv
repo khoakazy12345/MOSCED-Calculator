@@ -2,6 +2,223 @@ Window:
     StartUp:
     ManualInput:
     AutoInput:
+    MixedInput:
+
+
+<StartUp>:
+    name: "start_up"
+    BoxLayout:
+        orientation: "vertical"
+        size_hint: (1, 0.4)
+        pos_hint: {"x": 0, "y": 0.6}
+        font_size: self.width/10
+        Label:
+            size_hint: (1, 0.05)
+            text_size: self.size
+            halign: 'left'
+            font_size: self.width/80
+            text: "Made for Dr.Paluch's Research Team - Written by Thomas Nguyen - Version 1.0"
+        Label:
+            size_hint: (1, 0.15)
+            font_size: self.width/40
+            text: "[b]Welcome to MOSCED Calculator[/b]"
+            markup: True
+        Label:
+            size_hint: (1, 0.15)
+            font_size: self.width/30
+            text: "[b]Choose your input method[/b]"
+            markup: True
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint: (1, 0.3)
+        Button:
+            font_size: self.width/10
+            text: "Auto Input"
+            on_release:
+                app.root.current= "auto_input"
+                root.manager.transition.direction = "right"
+        Button:
+            font_size: self.width/10
+            text: "Mixed Input"
+            on_release:
+                app.root.current= "mixed_input"
+                root.manager.transition.direction = "up"
+        Button:
+            font_size: self.width/10
+            text: "Manual Input"
+            on_release:
+                app.root.current = "manual_input"
+                root.manager.transition.direction = "left"
+
+<MixedInput>:
+    name: "mixed_input"
+    v_1: v_1
+    v_2: v_2
+    lambda_1: lambda_1
+    lambda_2: lambda_2
+    tau_1: tau_1
+    tau_2: tau_2
+    rho_1: rho_1
+    rho_2: rho_2
+    alpha_1: alpha_1
+    alpha_2: alpha_2
+    beta_1: beta_1
+    beta_2: beta_2
+    temperature: temperature
+    output_1_to_2: output_1_to_2
+    output_2_to_1: output_2_to_1
+    spacing: 10
+    padding: 10
+    Button:
+        id: btn
+        text: "Compound 1: Choose from the dropdown"
+        size_hint: (0.5, 0.1)
+        pos_hint: {"x": 0, "y": 0.9}
+        font_size: self.width/30
+        on_release: root.add_dropdown()
+    Label:
+        canvas.before:
+            Color:
+                rgba: 87/255, 86/255, 86/255, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        size_hint: (0.5, 0.1)
+        pos_hint: {"x": 0.5, "y": 0.9}
+        text: "Compound 2: Input your value"
+        font_size: self.width/30
+
+    GridLayout:
+        cols: 4
+        size_hint: (1,0.4)
+        pos_hint: {"x": 0, "y": 0.5}
+        Label:
+            text: "V parameter of Compound 1"
+            font_size: self.width/16
+        FloatInput:
+            id: v_1
+            multi_line: False
+        Label:
+            text: "V parameter of Compound 2"
+            font_size: self.width/16
+        FloatInput:
+            id: v_2
+            multi_line: False
+        Label:
+            text: "Lambda parameter of Compound 1"
+            font_size: self.width/16
+        FloatInput:
+            id: lambda_1
+            multi_line: False
+        Label:
+            text: "Lambda parameter of Compound 2"
+            font_size: self.width/16
+        FloatInput:
+            id: lambda_2
+            multi_line: False
+        Label:
+            text: "Tau parameter of Compound 1"
+            font_size: self.width/16
+        FloatInput:
+            id: tau_1
+            multi_line: False
+        Label:
+            text: "Tau parameter of Compound 2"
+            font_size: self.width/16
+        FloatInput:
+            id: tau_2
+            multi_line: False
+        Label:
+            text: "Rho parameter of Compound 1"
+            font_size: self.width/16
+        FloatInput:
+            id: rho_1
+            multi_line: False
+        Label:
+            text: "Rho parameter of Compound 2"
+            font_size: self.width/16
+        FloatInput:
+            id: rho_2
+            multi_line: False
+        Label:
+            text: "Alpha parameter of Compound 1"
+            font_size: self.width/16
+        FloatInput:
+            id: alpha_1
+            multi_line: False
+        Label:
+            text: "Alpha parameter of Compound 2"
+            font_size: self.width/16
+        FloatInput:
+            id: alpha_2
+            multi_line: False
+        Label:
+            text: "Beta parameter of Compound 1"
+            font_size: self.width/16
+        FloatInput:
+            id: beta_1
+            multi_line: False
+        Label:
+            text: "Beta parameter of Compound 2"
+            font_size: self.width/16
+        FloatInput:
+            id: beta_2
+            multi_line: False
+
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint: (1, 0.066)
+        pos_hint: {"x": 0, "y": 0.434}
+        Label:
+            text: "Temperature (in Kelvin)"
+            size_hint: (0.25, 1)
+            font_size: self.width/16
+        FloatInput:
+            id: temperature
+            size_hint: (0.75, 1)
+            multi_line: False
+
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint: (1, 0.066)
+        pos_hint: {"x": 0, "y": 0.368}
+        Label:
+            font_size: self.width/16
+            text: "Results 1 in 2"
+        OutputInput:
+            id: output_1_to_2
+            multi_line: False
+        Label:
+            font_size: self.width/16
+            text: "Results 2 in 1"
+        OutputInput:
+            id: output_2_to_1
+            multi_line: False
+
+    GridLayout:
+        size_hint: (1, 0.15)
+        pos_hint: {"x": 0, "y": 0.15}
+        padding: [0,10,0,10]
+        cols: 2
+        Button:
+            text: "Submit"
+            font_size: self.width/32
+            on_release: root.press_submit()
+        Button:
+            text: "Clear"
+            font_size: self.width/32
+            on_release: root.press_clear()
+
+
+    Button:
+        size_hint: (1, 0.15)
+        pos_hint: {"x": 0, "y": 0}
+        text: "Return to Main Menu"
+        font_size: self.width/64
+        on_release:
+            app.root.current = "start_up"
+            root.manager.transition.direction = "down"
+
 
 <AutoInput>:
     name: "auto_input"
@@ -9,78 +226,71 @@ Window:
     output_2: output_2
     temperature: temperature
     Button:
-        font_size: 20
-        size_hint: 0.5,0.2
-        pos_hint: {"x": 0, "y": 0}
-        text: "Return to Main Menu"
-        on_release:
-            app.root.current = "start_up"
-            root.manager.transition.direction = "left"
+        id: btn_1
+        text: "Compound 1: Choose from the dropdown"
+        size_hint: (0.5, 0.3)
+        pos_hint: {"x": 0, "y": 0.75}
+        font_size : self.width/32
+        on_release: root.setup_btn_1()
+    Button:
+        id: btn_2
+        text: "Compound 2: Choose from the dropdown"
+        size_hint: (0.5, 0.3)
+        pos_hint: {"x": 0.5, "y": 0.75}
+        font_size : self.width/32
+        on_release: root.setup_btn_2()
     BoxLayout:
         size_hint: 1,0.1
         pos_hint: {"x": 0, "y": 0.65}
         Label:
-            text: "Input Your Temperature"
+            text: "Input Your Temperature (Kelvin)"
+            font_size: self.width/32
         FloatInput:
             id: temperature
             multiline: False
-
     BoxLayout:
         Label:
             text: "Results 1 in 2"
+            font_size: self.width/32
             size_hint: 0.3, 0.1
-            pos_hint: {"x": 0.1, "y": 0.35}
-
+            pos_hint: {"x": 0.1, "y": 0.4}
         Label:
             text: "Result 2 in 1"
+            font_size: self.width/32
             size_hint: 0.3, 0.1
-            pos_hint: {"x": 0.1, "y": 0.35}
-
+            pos_hint: {"x": 0.1, "y": 0.4}
     BoxLayout:
         OutputInput:
             id : output_1
             multiline: False
             size_hint: 0.3, 0.1
-            pos_hint: {"x": 0.35, "y": 0.25}
-
+            pos_hint: {"x": 0.35, "y": 0.3}
         OutputInput:
             id : output_2
             multiline: False
             size_hint: 0.3, 0.1
-            pos_hint: {"x": 0.35, "y": 0.25}
-
-<StartUp>:
-    name: "start_up"
-    BoxLayout:
-        orientation: "vertical"
-        Label:
-            size_hint: (1, 0.05)
-            text_size: self.size
-            halign: 'left'
-            text: "Made by Dr.Paluch's Research Team - Written by Thomas Nguyen"
-        Label:
-            size_hint: (1, 0.6)
-            font_size: 40
-            text: "[b]Choose your input method[/b]"
-            markup: True
-        GridLayout:
-            cols: 2
-            size_hint: (1, 0.6)
-            Button:
-                font_size: 40
-                text: "Auto Input"
-                on_release:
-                    app.root.current= "auto_input"
-                    root.manager.transition.direction = "right"
-            Button:
-                font_size: 40
-                text: "Manual Input"
-                on_release:
-                    app.root.current = "manual_input"
-                    root.manager.transition.direction = "left"
-
-
-
+            pos_hint: {"x": 0.35, "y": 0.3}
+    GridLayout:
+        size_hint: (1, 0.15)
+        pos_hint: {"x": 0, "y": 0.15}
+        padding: [0,10,0,10]
+        cols: 2
+        Button:
+            text: "Submit"
+            font_size: self.width/32
+            on_release: root.press_submit()
+        Button:
+            text: "Clear"
+            font_size: self.width/32
+            on_release: root.press_clear()
+    Button:
+        size_hint: (1, 0.15)
+        pos_hint: {"x": 0, "y": 0}
+        text: "Return to Main Menu"
+        font_size: self.width/64
+        on_release:
+            app.root.current = "start_up"
+            root.manager.transition.direction = "left"
 
 
 <ManualInput>:
@@ -103,91 +313,113 @@ Window:
 
     BoxLayout:
         orientation: "vertical"
-        padding: 10
-        spacing: 10
         size_hint: 1, 1
 
         BoxLayout:
             orientation: "horizontal"
             size_hint: (1, 0.2)
             Label:
+                canvas.before:
+                    Color:
+                        rgba: 87/255, 86/255, 86/255, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
                 text: "Compound 1"
-                font_size: 20
+                font_size: self.width/32
             Label:
+                canvas.before:
+                    Color:
+                        rgba: 87/255, 86/255, 86/255, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
                 text: "Compound 2"
-                font_size: 20
+                font_size: self.width/32
 
         GridLayout:
             cols: 4
             size_hint: 1,0.6
             Label:
-                text: "v parameter of Compound 1"
+                text: "V parameter of Compound 1"
+                font_size: self.width/16
             FloatInput:
                 id: v_parameters_1
                 multiline: False
 
             Label:
-                text: "v parameter of Compound 2"
+                text: "V parameter of Compound 2"
+                font_size: self.width/16
             FloatInput:
                 id: v_parameters_2
                 multiline: False
 
             Label:
-                text: "lambda parameter of Compound 1"
+                text: "Lambda parameter of Compound 1"
+                font_size: self.width/16
             FloatInput:
                 id: lambda_parameters_1
                 multiline: False
 
             Label:
-                text: "lambda parameter of Compound 2"
+                text: "Lambda parameter of Compound 2"
+                font_size: self.width/16
             FloatInput:
                 id: lambda_parameters_2
                 multiline: False
 
             Label:
-                text: "tau parameter of Compound 1"
+                text: "Tau parameter of Compound 1"
+                font_size: self.width/16
             FloatInput:
                 id: tau_parameters_1
                 multiline: False
 
             Label:
-                text: "tau parameter of Compound 2"
+                text: "Tau parameter of Compound 2"
+                font_size: self.width/16
             FloatInput:
                 id: tau_parameters_2
                 multiline: False
 
             Label:
-                text: "rho parameter of Compound 1"
+                text: "Rho parameter of Compound 1"
+                font_size: self.width/16
             FloatInput:
                 id: rho_parameters_1
                 multiline: False
 
             Label:
-                text: "rho parameter of Compound 2"
+                text: "Rho parameter of Compound 2"
+                font_size: self.width/16
             FloatInput:
                 id: rho_parameters_2
                 multiline: False
 
             Label:
-                text: "alpha parameter of Compound 1"
+                text: "Alpha parameter of Compound 1"
+                font_size: self.width/16
             FloatInput:
                 id: alpha_parameters_1
                 multiline: False
 
             Label:
-                text: "alpha parameter of Compound 2"
+                text: "Alpha parameter of Compound 2"
+                font_size: self.width/16
             FloatInput:
                 id: alpha_parameters_2
                 multiline: False
 
             Label:
-                text: "beta parameter of Compound 1"
+                text: "Beta parameter of Compound 1"
+                font_size: self.width/16
             FloatInput:
                 id: beta_parameters_1
                 multiline: False
 
             Label:
-                text: "beta parameter of Compound 2"
+                text: "Beta parameter of Compound 2"
+                font_size: self.width/16
             FloatInput:
                 id: beta_parameters_2
                 multiline: False
@@ -197,7 +429,8 @@ Window:
             size_hint: 1, 0.1
             Label:
                 size_hint: 0.333, 1
-                text: "temperature"
+                text: "Temperature (in Kelvin)"
+                font_size: self.width/16
             FloatInput:
                 id: temperature
                 multiline: False
@@ -206,29 +439,34 @@ Window:
             cols: 4
             size_hint: 1, 0.1
             Label:
-                text: "Result for Substance 1 in Substance 2"
+                text: "Result 1 in 2"
+                font_size: self.width/16
             OutputInput:
                 id: output_1_to_2
                 multiline: False
             Label:
-                text: "Result for Substance 2 in Substance 1"
+                text: "Result 2 in 1"
+                font_size: self.width/16
             OutputInput:
                 id: output_2_to_1
                 multiline: False
 
         BoxLayout:
             orientation: "horizontal"
-            padding: 10
-            size_hint: 1, 0.3
+            size_hint: 1, 0.2
+            padding: [0,10,0,10]
             Button:
                 text: "Submit"
+                font_size: self.width/32
                 on_press: root.pressed_submit()
             Button:
                 text: "Clear"
+                font_size: self.width/32
                 on_press: root.pressed_clear()
         Button:
             text: "Return to Main Menu"
-            size_hint: 1, 0.3
+            font_size: self.width/64
+            size_hint: 1, 0.2
             on_release:
                 app.root.current = "start_up"
                 root.manager.transition.direction = "right"
