@@ -1,0 +1,8 @@
+In this update, I added the following features: 
+- You can now press Tab to move between TextInputs. 
+- I have disabled all unnesscary TextInputs. You would notice these as areas a bit grayer than the normal ones.
+- Warning Windows will have a more uniform message with a proper name as a Window name.
+
+Also, I have fixed some minor bugs:
+- Filling zero into the temperature input will now trigger a Warning Window.
+- Filling only a "." in the temperature input will now trigger a Warning Window.
