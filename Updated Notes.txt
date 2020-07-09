@@ -1,3 +1,4 @@
+Version 1.0
 In this update, I added the following features: 
 - You can now press Tab to move between TextInputs. 
 - I have disabled all unnesscary TextInputs. You would notice these as areas a bit grayer than the normal ones.
