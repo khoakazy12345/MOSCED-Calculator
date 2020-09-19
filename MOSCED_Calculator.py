@@ -359,10 +359,10 @@ class ManualInput(Screen):
 kv = Builder.load_file("mymaincal.kv")
 
 
-class MyMainCal(App):
+class MOSCED_Calculator(App):
     def build(self):
         return kv
 
 
 if __name__ == "__main__":
-    MyMainCal().run()
+    MOSCED_Calculator().run()
