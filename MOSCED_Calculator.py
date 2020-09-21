@@ -47,7 +47,7 @@ def calculate(v1, v2, lambda1, lambda2, tau1, tau2, rho1, rho2, alpha1, alpha2, 
                                                  (powerT1(alpha1, T) - powerT1(alpha2, T)) * (
                                                          powerT1(beta1, T) - powerT1(beta2, T)) / xi1) + d12
         return str(math.exp(activity_coefficient))
-        
+        #testing
 
 def show_popup_KeyError():
     key_error = BoxLayout()
