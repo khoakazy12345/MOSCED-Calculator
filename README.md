@@ -52,7 +52,7 @@ In this current version of the code, I used these two refereces as data:
 2) Dhakal, P., &amp; Paluch, A. S. (2018). Assessment and Revision of the MOSCED Parameters for Water: Application to Limiting Activity Coefficients and Binary Liquid–Liquid Equilibrium. Industrial &amp; Engineering Chemistry Research, 57(5), 1689-1695. doi:10.1021/acs.iecr.7b04133
 
 ***In order to have the best experience, please use the app in full screen mode since minimize it might cause word lines to be overlaped.***<br>
-***Also, I would strongly recommend using a mouse (not your mousepad on the laptop) since there is a small bug***<br>
+***Also, I would strongly recommend using a mouse (not your mousepad on the laptop) since the list would not work properly if you use the mousepad***<br>
 <br>
 Also, since I am not able to require citation or acknowledgment in research papers which use the GPL-covered software or its output, giving our research teams and I credits is completely optional to you. However, please consider doing so whenever you use our project since it did consume us a huge amount of time and effort. 
 
